@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playfair Cipher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+        }
+        #pf_block {
+            background-color: white;
+            border: 2px solid #d32f2f;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        #pf_block h2 {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        .form-control {
+            border-radius: 10px;
+        }
+        .btn {
+            border-radius: 15px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-primary {
+            background-color: #d32f2f;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #b71c1c;
+        }
+        .btn-secondary {
+            background-color: #b71c1c;
+            border: none;
+        }
+        .btn-secondary:hover {
+            background-color: #9c1d1d;
+        }
+        #pf_result {
+            background-color: #fdecea;
+            color: #d32f2f;
+            font-weight: bold;
+            border-radius: 10px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-4">
+    <div id="pf_block">
+        <h2>(3.) Playfair Cipher</h2>
+        <form id="playfair_form" action="#pf_block">
+            <label for="pf_text" class="form-label">Plain Text:</label>
+            <input type="text" id="pf_text" class="form-control mb-3" placeholder="Enter a text to encrypt">
+            <label for="pf_key" class="form-label">Key:</label>
+            <input type="text" id="pf_key" class="form-control mb-3" placeholder="Enter a key">
+            <button id="pf_enc_btn" class="btn btn-primary mt-2" type="button" onclick="runPlayfairEncrypt()">Encrypt</button>
+            <button id="pf_denc_btn" class="btn btn-secondary mt-2" type="button" onclick="runPlayfairDecrypt()">Decrypt</button>
+        </form>
+        <div class="mt-4" id="pf_result"></div>
+    </div>
+</div>
+
+<script>
+    const alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ';
+
+    function runPlayfairEncrypt() {
+        const plaintext = document.getElementById("pf_text").value.toUpperCase().replace(/J/g, 'I');
+        const key = document.getElementById("pf_key").value.toUpperCase().replace(/J/g, 'I');
+
+        if (plaintext.length === 0 || key.length === 0) {
+            alert("Text and key fields cannot be empty!");
+            return;
+        }
+
+        const matrix = generatePlayfairMatrix(key);
+        const encryptedText = playfairEncrypt(plaintext, matrix);
+
+        document.getElementById("pf_result").textContent = "Encrypted Text: " + encryptedText;
+    }
+
+    function runPlayfairDecrypt() {
+        const encryptedText = document.getElementById("pf_text").value.toUpperCase().replace(/J/g, 'I');
+        const key = document.getElementById("pf_key").value.toUpperCase().replace(/J/g, 'I');
+
+        if (encryptedText.length === 0 || key.length === 0) {
+            alert("Text and key fields cannot be empty!");
+            return;
+        }
+
+        const matrix = generatePlayfairMatrix(key);
+        const decryptedText = playfairDecrypt(encryptedText, matrix);
+
+        document.getElementById("pf_result").textContent = "Decrypted Text: " + decryptedText;
+    }
+
+    function generatePlayfairMatrix(key) {
+        key = key.replace(/[^A-Z]/g, ''); // Remove non-alphabet characters
+        key = [...new Set(key)]; // Remove duplicates
+        const matrix = [];
+
+        for (let i = 0; i < key.length; i++) {
+            if (matrix.length === 0 || matrix[matrix.length - 1].length === 5) {
+                matrix.push([]);
+            }
+            matrix[matrix.length - 1].push(key[i]);
+        }
+
+        for (let i = 0; i < alphabet.length; i++) {
+            if (!key.includes(alphabet[i])) {
+                if (matrix.length === 0 || matrix[matrix.length - 1].length === 5) {
+                    matrix.push([]);
+                }
+                matrix[matrix.length - 1].push(alphabet[i]);
+            }
+        }
+
+        return matrix;
+    }
+
+    function playfairEncrypt(plaintext, matrix) {
+        const pairs = getLetterPairs(plaintext);
+        let encryptedText = '';
+
+        pairs.forEach(pair => {
+            const [row1, col1] = findPosition(matrix, pair.charAt(0));
+            const [row2, col2] = findPosition(matrix, pair.charAt(1));
+
+            if (row1 === row2) {
+                encryptedText += matrix[row1][(col1 + 1) % 5] + matrix[row2][(col2 + 1) % 5];
+            } else if (col1 === col2) {
+                encryptedText += matrix[(row1 + 1) % 5][col1] + matrix[(row2 + 1) % 5][col2];
+            } else {
+                encryptedText += matrix[row1][col2] + matrix[row2][col1];
+            }
+        });
+
+        return encryptedText;
+    }
+
+    function playfairDecrypt(encryptedText, matrix) {
+        const pairs = getLetterPairs(encryptedText);
+        let decryptedText = '';
+
+        pairs.forEach(pair => {
+            const [row1, col1] = findPosition(matrix, pair.charAt(0));
+            const [row2, col2] = findPosition(matrix, pair.charAt(1));
+
+            if (row1 === row2) {
+                decryptedText += matrix[row1][(col1 - 1 + 5) % 5] + matrix[row2][(col2 - 1 + 5) % 5];
+            } else if (col1 === col2) {
+                decryptedText += matrix[(row1 - 1 + 5) % 5][col1] + matrix[(row2 - 1 + 5) % 5][col2];
+            } else {
+                decryptedText += matrix[row1][col2] + matrix[row2][col1];
+            }
+        });
+
+        return decryptedText;
+    }
+
+    function getLetterPairs(text) {
+        const pairs = [];
+
+        for (let i = 0; i < text.length; i += 2) {
+            if (i + 1 < text.length) {
+                pairs.push(text.substr(i, 2));
+            } else {
+                pairs.push(text.charAt(i) + 'X');
+            }
+        }
+        return pairs;
+    }
+
+    function findPosition(matrix, letter) {
+        for (let row = 0; row < matrix.length; row++) {
+            for (let col = 0; col < matrix[row].length; col++) {
+                if (matrix[row][col] === letter) {
+                    return [row, col];
+                }
+            }
+        }
+        return [-1, -1];
+    }
+</script>
+</body>
+</html>
