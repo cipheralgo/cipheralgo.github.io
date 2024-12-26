@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hill Cipher</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Roboto', sans-serif;
+        }
+        #Hill_block {
+            background-color: white;
+            border: 2px solid #d32f2f;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        #Hill_block h2 {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+        .form-control {
+            border-radius: 10px;
+        }
+        .btn {
+            border-radius: 15px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        .btn-primary {
+            background-color: #d32f2f;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #b71c1c;
+        }
+        .btn-secondary {
+            background-color: #b71c1c;
+            border: none;
+        }
+        .btn-secondary:hover {
+            background-color: #9c1d1d;
+        }
+        #hill_result {
+            background-color: #fdecea;
+            color: #d32f2f;
+            font-weight: bold;
+            border-radius: 10px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container mt-4">
+    <div id="Hill_block">
+        <h2>Hill Cipher</h2>
+        <form id="Hill_form" action="#Hill_block">
+            <label for="Hill_text" class="form-label">Plain Text:</label>
+            <input type="text" id="Hill_text" class="form-control mb-3" placeholder="Enter a text to encrypt">
+            <label for="Hill_key" class="form-label">Key (Enter 4 numbers without spaces):</label>
+            <input type="text" id="Hill_key" class="form-control mb-3" placeholder="Enter a key">
+            <button id="Hill_enc_btn" class="btn btn-primary mt-2" type="button" onclick="runHillEncrypt()">Encrypt</button>
+            <button id="Hill_denc_btn" class="btn btn-secondary mt-2" type="button" onclick="runHillDecrypt()">Decrypt</button>
+        </form>
+        <div class="mt-4" id="hill_result"></div>
+    </div>
+</div>
+
+<script>
+    function runHillEncrypt() {
+        const plaintext = document.getElementById("Hill_text").value.toUpperCase();
+        const key = document.getElementById("Hill_key").value;
+
+        if (plaintext.length === 0 || key.length === 0) {
+            alert("Text and key fields cannot be empty!");
+            return;
+        }
+
+        if (!isValidNumericKey(key)) {
+            alert("Key must be a sequence of 4 numerical values.");
+            return;
+        }
+
+        const encryptedText = hillEncrypt(plaintext, key);
+
+        document.getElementById("hill_result").textContent = "Encrypted Text: " + encryptedText;
+    }
+
+    function runHillDecrypt() {
+        const encryptedText = document.getElementById("Hill_text").value.toUpperCase();
+        const key = document.getElementById("Hill_key").value;
+
+        if (encryptedText.length === 0 || key.length === 0) {
+            alert("Text and key fields cannot be empty!");
+            return;
+        }
+
+        if (!isValidNumericKey(key)) {
+            alert("Key must be a sequence of 4 numerical values.");
+            return;
+        }
+
+        const decryptedText = hillDecrypt(encryptedText, key);
+
+        document.getElementById("hill_result").textContent = "Decrypted Text: " + decryptedText;
+    }
+
+    function isValidNumericKey(key) {
+        return /^[0-9]{4}$/.test(key);
+    }
+
+    function matrixMultiply(matrix, vector, mod) {
+        const result = [];
+
+        for (let i = 0; i < matrix.length; i++) {
+            let sum = 0;
+
+            for (let j = 0; j < vector.length; j++) {
+                sum += matrix[i][j] * vector[j];
+            }
+
+            result.push(sum % mod);
+        }
+
+        return result;
+    }
+
+    function matrixInverse(matrix) {
+        const det = (matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0] + 26) % 26;
+        let invDet = -1;
+
+        for (let i = 0; i < 26; i++) {
+            if ((det * i) % 26 === 1) {
+                invDet = i;
+                break;
+            }
+        }
+
+        if (invDet === -1) {
+            return null;
+        }
+
+        const result = [
+            [(matrix[1][1] * invDet) % 26, (-matrix[0][1] * invDet) % 26],
+            [(-matrix[1][0] * invDet) % 26, (matrix[0][0] * invDet) % 26]
+        ];
+
+        return result.map(row => row.map(value => (value + 26) % 26));
+    }
+
+    function hillEncrypt(plaintext, key) {
+        const keyMatrix = [
+            [parseInt(key[0]), parseInt(key[1])],
+            [parseInt(key[2]), parseInt(key[3])]
+        ];
+
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const mod = alphabet.length;
+
+        let encryptedText = '';
+
+        for (let i = 0; i < plaintext.length; i += 2) {
+            const vector = [
+                alphabet.indexOf(plaintext[i]),
+                i + 1 < plaintext.length ? alphabet.indexOf(plaintext[i + 1]) : 0
+            ];
+
+            const encryptedVector = matrixMultiply(keyMatrix, vector, mod);
+
+            encryptedText += alphabet[encryptedVector[0]];
+            encryptedText += alphabet[encryptedVector[1]];
+        }
+
+        return encryptedText;
+    }
+
+    function hillDecrypt(encryptedText, key) {
+        const keyMatrix = matrixInverse([
+            [parseInt(key[0]), parseInt(key[1])],
+            [parseInt(key[2]), parseInt(key[3])]
+        ]);
+
+        if (keyMatrix === null) {
+            alert("The key matrix is not invertible. Encryption/decryption is not possible.");
+            return "";
+        }
+
+        const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const mod = alphabet.length;
+
+        let decryptedText = '';
+
+        for (let i = 0; i < encryptedText.length; i += 2) {
+            const vector = [
+                alphabet.indexOf(encryptedText[i]),
+                i + 1 < encryptedText.length ? alphabet.indexOf(encryptedText[i + 1]) : 0
+            ];
+
+            const decryptedVector = matrixMultiply(keyMatrix, vector, mod);
+
+            decryptedText += alphabet[decryptedVector[0]];
+            decryptedText += alphabet[decryptedVector[1]];
+        }
+
+        return decryptedText;
+    }
+</script>
+</body>
+</html>
