@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -42,6 +42,13 @@
         .btn-secondary:hover {
             background-color: #9c1d1d;
         }
+        .btn-success {
+            background-color: #388e3c;
+            border: none;
+        }
+        .btn-success:hover {
+            background-color: #2e7d32;
+        }
         #result_box {
             background-color: #fdecea;
             color: #d32f2f;
@@ -63,6 +70,8 @@
             <input type="number" id="caesar_key" class="form-control mb-3" placeholder="Enter a key (0 to 25)">
             <button class="btn btn-primary mt-2" type="button" onclick="runEncrypt(false)">Encrypt</button>
             <button class="btn btn-secondary mt-2" type="button" onclick="runEncrypt(true)">Decrypt</button>
+            <button class="btn btn-success mt-2" type="button" onclick="saveMessage()">Save Message</button>
+            <button class="btn btn-info mt-2" type="button" onclick="loadMessage()">Load Message</button>
         </form>
         <div class="mt-4">
             <b>Encrypted/Decrypted Text:</b>
@@ -103,6 +112,34 @@
         }
 
         return result;
+    }
+
+    function saveMessage() {
+        const text = document.getElementById("caesar_text").value;
+        const key = document.getElementById("caesar_key").value;
+        const result = document.getElementById("result_box").textContent;
+
+        if (result.length === 0) {
+            alert("No result to save!");
+            return;
+        }
+
+        localStorage.setItem("savedMessage", JSON.stringify({ text, key, result }));
+        alert("Message saved successfully!");
+    }
+
+    function loadMessage() {
+        const savedData = JSON.parse(localStorage.getItem("savedMessage"));
+
+        if (!savedData) {
+            alert("No saved message found!");
+            return;
+        }
+
+        document.getElementById("caesar_text").value = savedData.text;
+        document.getElementById("caesar_key").value = savedData.key;
+        document.getElementById("result_box").textContent = savedData.result;
+        alert("Message loaded successfully!");
     }
 </script>
 
