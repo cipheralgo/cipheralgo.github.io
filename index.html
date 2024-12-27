@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Cipher Algorithms</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             background-color: #f8f9fa;
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Montserrat', sans-serif;
         }
         header {
-            background-color: #d32f2f;
+            background: linear-gradient(45deg, #d32f2f, #b71c1c);
             color: white;
             border-bottom-left-radius: 20px;
             border-bottom-right-radius: 20px;
@@ -32,80 +33,157 @@
         }
         .btn:hover {
             background-color: #b71c1c;
-            transform: translateY(-3px);
+            transform: scale(1.05);
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
         }
         footer {
-            background-color: #f8f9fa;
-            color: #d32f2f;
+            background: linear-gradient(45deg, #b71c1c, #f8f9fa);
+            color: white;
             border-top-left-radius: 20px;
             border-top-right-radius: 20px;
             padding: 20px 0;
+        }
+        footer a {
+            color: white;
+            margin-right: 10px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        footer a:hover {
+            color: #ff7961;
         }
         footer small {
             display: block;
             margin-top: 10px;
             font-size: 0.85rem;
         }
+        .card {
+            border-radius: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 6px 10px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            color: #d32f2f;
+            position: relative;
+        }
+        h2:after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background-color: #d32f2f;
+            margin: 10px auto;
+        }
     </style>
 </head>
 <body>
     <header class="text-center">
-        <h1>Cipher Algorithms</h1>
+        <h1><img src="cipher-logo.png" alt="Cipher Logo" style="width: 50px;" class="me-2">Cipher Algorithms</h1>
     </header>
-    <main class="container text-center">
-        <h2 class="mb-4" style="color: #d32f2f;">Select an Algorithm</h2>
+    <main class="container">
+        <h2 class="text-center mb-4">Select an Algorithm</h2>
         <div class="row">
             <div class="col-md-4">
-                <a href="https://cipheralgo.github.io/vernam" class="btn">Vernam Cipher</a>
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Vernam Cipher</h5>
+                        <p class="card-text">A one-time pad encryption algorithm offering perfect secrecy.</p>
+                        <a href="https://cipheralgo.github.io/vernam" class="btn">Explore</a>
+                    </div>
+                </div>
             </div>
             <div class="col-md-4">
-                <a href="https://cipheralgo.github.io/hill" class="btn">Hill Cipher</a>
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Hill Cipher</h5>
+                        <p class="card-text">A polygraphic cipher using matrix multiplication.</p>
+                        <a href="https://cipheralgo.github.io/hill" class="btn">Explore</a>
+                    </div>
+                </div>
             </div>
             <div class="col-md-4">
-                <a href="https://cipheralgo.github.io/vigenere" class="btn">Vigenère Cipher</a>
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Vigenère Cipher</h5>
+                        <p class="card-text">A method of encrypting alphabetic text using a series of interwoven Caesar ciphers.</p>
+                        <a href="https://cipheralgo.github.io/vigenere" class="btn">Explore</a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row mt-4">
             <div class="col-md-4">
-                <a href="https://cipheralgo.github.io/autokey" class="btn">Autokey Cipher</a>
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Autokey Cipher</h5>
+                        <p class="card-text">A polyalphabetic cipher using a key and the plaintext.</p>
+                        <a href="https://cipheralgo.github.io/autokey" class="btn">Explore</a>
+                    </div>
+                </div>
             </div>
             <div class="col-md-4">
-                <a href="https://cipheralgo.github.io/elgamal" class="btn">ElGamal Cipher</a>
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">ElGamal Cipher</h5>
+                        <p class="card-text">An asymmetric key encryption algorithm.</p>
+                        <a href="https://cipheralgo.github.io/elgamal" class="btn">Explore</a>
+                    </div>
+                </div>
             </div>
             <div class="col-md-4">
-                <a href="https://cipheralgo.github.io/caesar" class="btn">Caesar Cipher</a>
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Caesar Cipher</h5>
+                        <p class="card-text">A substitution cipher that shifts letters in the alphabet.</p>
+                        <a href="https://cipheralgo.github.io/caesar" class="btn">Explore</a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-4">
-                <a href="https://cipheralgo.github.io/playfair" class="btn">Playfair Cipher</a>
-            </div>
-            <div class="col-md-4">
-                <a href="https://cipheralgo.github.io/monoalphabetic" class="btn">Monoalphabetic Cipher</a>
-            </div>
-            <div class="col-md-4">
-                <a href="https://cipheralgo.github.io/polyalphabetic" class="btn">Polyalphabetic Cipher</a>
-            </div>
-        </div>
-        <div class="row">
+        <div class="row mt-4">
             <div class="col-md-6">
-                <a href="https://cipheralgo.github.io/railfence" class="btn">Rail Fence Cipher</a>
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Rail Fence Cipher</h5>
+                        <p class="card-text">A transposition cipher that writes plaintext in a zigzag pattern.</p>
+                        <a href="https://cipheralgo.github.io/railfence" class="btn">Explore</a>
+                    </div>
+                </div>
             </div>
             <div class="col-md-6">
-                <a href="https://cipheralgo.github.io/columnar" class="btn">Columnar Transposition Cipher</a>
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Columnar Cipher</h5>
+                        <p class="card-text">A transposition cipher that reorders plaintext into columns.</p>
+                        <a href="https://cipheralgo.github.io/columnar" class="btn">Explore</a>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row mt-4">
             <div class="col-md-12">
-                <a href="https://cipheralgo.github.io/sdes" class="btn">S-DES (Simplified DES) Cipher</a>
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">S-DES Cipher</h5>
+                        <p class="card-text">A simplified version of the Data Encryption Standard (DES).</p>
+                        <a href="https://cipheralgo.github.io/sdes" class="btn">Explore</a>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
-    <footer class="text-center">
+    <footer class="text-center mt-5">
         <p>&copy; 2024 Cipher Algorithms. All rights reserved.</p>
+        <div>
+            <a href="https://github.com/adelmohammad"><i class="fab fa-github"></i> GitHub</a>
+            <a href="https://linkedin.com/in/adelmohammad"><i class="fab fa-linkedin"></i> LinkedIn</a>
+        </div>
         <small>By Adel Mohammad</small>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 </body>
 </html>
