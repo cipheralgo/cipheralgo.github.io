@@ -90,17 +90,15 @@
 
     function processText(text, rules, isEncrypting) {
         const result = [];
-        let ruleIndex = 0; // Ensure rules rotate properly
         for (let i = 0; i < text.length; i++) {
             const currentChar = text[i];
             if (currentChar < 'A' || currentChar > 'Z') {
                 result.push(currentChar); // Skip non-alphabetic characters
                 continue;
             }
-            const rule = rules[ruleIndex % rules.length]; // Rotate through rules
+            const rule = rules[i % rules.length]; // Rotate through rules
             const direction = isEncrypting ? rule.direction : (rule.direction === 'R' ? 'L' : 'R'); // Reverse direction for decryption
             result.push(applyShift(currentChar, rule.shift, direction));
-            ruleIndex++;
         }
         return result.join('');
     }
