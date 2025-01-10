@@ -90,7 +90,7 @@
 
     function processText(text, rules, isEncrypting) {
         const result = [];
-        let ruleIndex = 0;
+        let ruleIndex = 0; // Ensure rules rotate properly
         for (let i = 0; i < text.length; i++) {
             const currentChar = text[i];
             if (currentChar < 'A' || currentChar > 'Z') {
