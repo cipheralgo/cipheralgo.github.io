@@ -71,57 +71,64 @@
 </div>
 
 <script>
-    function parseRules(rulesText) {
-        const rules = rulesText.split(';').map(rule => {
-            const [shift, direction] = rule.split(',');
-            return { shift: parseInt(shift), direction: direction.toUpperCase() };
-        });
-        return rules;
-    }
+function parseRules(rulesText) {
+    const rules = rulesText.split(';').map(rule => {
+        const [shift, direction] = rule.split(',');
+        return { shift: parseInt(shift), direction: direction.trim().toUpperCase() };
+    });
+    return rules;
+}
 
-    function applyShift(char, shift, direction) {
-        if (char < 'A' || char > 'Z') return char;
-        const alphabetSize = 26;
-        const baseCode = 'A'.charCodeAt(0);
-        const offset = direction === 'R' ? shift : -shift;
-        const newCharCode = ((char.charCodeAt(0) - baseCode + offset + alphabetSize) % alphabetSize) + baseCode;
-        return String.fromCharCode(newCharCode);
-    }
+function applyShift(char, shift, direction) {
+    if (char < 'A' || char > 'Z') return char; // Non-alphabetic characters remain unchanged
+    const alphabetSize = 26;
+    const baseCode = 'A'.charCodeAt(0);
+    const offset = direction === 'R' ? shift : -shift;
+    const newCharCode = ((char.charCodeAt(0) - baseCode + offset + alphabetSize) % alphabetSize) + baseCode;
+    return String.fromCharCode(newCharCode);
+}
 
-    function processText(text, rules, isEncrypting) {
-        const result = [];
-        for (let i = 0; i < text.length; i++) {
-            const rule = rules[i % rules.length];
-            const shift = rule.shift;
-            const direction = isEncrypting ? rule.direction : (rule.direction === 'R' ? 'L' : 'R');
-            result.push(applyShift(text[i], shift, direction));
+function processText(text, rules, isEncrypting) {
+    const result = [];
+    let ruleIndex = 0;
+    for (let i = 0; i < text.length; i++) {
+        const currentChar = text[i];
+        if (currentChar < 'A' || currentChar > 'Z') {
+            result.push(currentChar); // Skip non-alphabetic characters
+            continue;
         }
-        return result.join('');
+        const rule = rules[ruleIndex % rules.length]; // Rotate through rules
+        const direction = isEncrypting ? rule.direction : (rule.direction === 'R' ? 'L' : 'R'); // Reverse direction for decryption
+        result.push(applyShift(currentChar, rule.shift, direction));
+        ruleIndex++;
     }
+    return result.join('');
+}
 
-    function runEncrypt() {
-        const plainText = document.getElementById("polyalphabetic_text").value.toUpperCase();
-        const rulesText = document.getElementById("polyalphabetic_rules").value;
-        if (!plainText || !rulesText) {
-            alert("Both text and key rules must be provided!");
-            return;
-        }
-        const rules = parseRules(rulesText);
-        const encryptedText = processText(plainText, rules, true);
-        document.getElementById("polyalphabetic_result").textContent = "Encrypted Text: " + encryptedText;
+function runEncrypt() {
+    const plainText = document.getElementById("polyalphabetic_text").value.toUpperCase().replace(/\s+/g, '');
+    const rulesText = document.getElementById("polyalphabetic_rules").value;
+    if (!plainText || !rulesText) {
+        alert("Both text and key rules must be provided!");
+        return;
     }
+    const rules = parseRules(rulesText);
+    const encryptedText = processText(plainText, rules, true);
+    document.getElementById("polyalphabetic_result").textContent = "Encrypted Text: " + encryptedText;
+}
 
-    function runDecrypt() {
-        const encryptedText = document.getElementById("polyalphabetic_text").value.toUpperCase();
-        const rulesText = document.getElementById("polyalphabetic_rules").value;
-        if (!encryptedText || !rulesText) {
-            alert("Both text and key rules must be provided!");
-            return;
-        }
-        const rules = parseRules(rulesText);
-        const decryptedText = processText(encryptedText, rules, false);
-        document.getElementById("polyalphabetic_result").textContent = "Decrypted Text: " + decryptedText;
+function runDecrypt() {
+    const encryptedText = document.getElementById("polyalphabetic_text").value.toUpperCase().replace(/\s+/g, '');
+    const rulesText = document.getElementById("polyalphabetic_rules").value;
+    if (!encryptedText || !rulesText) {
+        alert("Both text and key rules must be provided!");
+        return;
     }
+    const rules = parseRules(rulesText);
+    const decryptedText = processText(encryptedText, rules, false);
+    document.getElementById("polyalphabetic_result").textContent = "Decrypted Text: " + decryptedText;
+}
+
 </script>
 </body>
 </html>
