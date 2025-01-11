@@ -101,8 +101,7 @@
 
     function autoKeyEncrypt(plaintext, key) {
         let encryptedText = '';
-        key = key + plaintext;
-        let keyIndex = 0;
+        let fullKey = key + plaintext;
 
         for (let i = 0; i < plaintext.length; i++) {
             if (!alphabet.includes(plaintext[i])) {
@@ -110,13 +109,11 @@
                 continue;
             }
 
-            const shift = alphabet.indexOf(key[keyIndex]);
+            const shift = alphabet.indexOf(fullKey[i]);
             const plainIdx = alphabet.indexOf(plaintext[i]);
 
             const encryptedIdx = (plainIdx + shift) % 26;
             encryptedText += alphabet[encryptedIdx];
-
-            keyIndex++;
         }
 
         return encryptedText;
@@ -124,7 +121,7 @@
 
     function autoKeyDecrypt(encryptedText, key) {
         let decryptedText = '';
-        let keyIndex = 0;
+        let fullKey = key;
 
         for (let i = 0; i < encryptedText.length; i++) {
             if (!alphabet.includes(encryptedText[i])) {
@@ -132,14 +129,13 @@
                 continue;
             }
 
-            const shift = alphabet.indexOf(key[keyIndex]);
+            const shift = alphabet.indexOf(fullKey[i]);
             const encryptedIdx = alphabet.indexOf(encryptedText[i]);
 
             const decryptedIdx = (encryptedIdx - shift + 26) % 26;
             decryptedText += alphabet[decryptedIdx];
 
-            key += alphabet[decryptedIdx];
-            keyIndex++;
+            fullKey += alphabet[decryptedIdx];
         }
 
         return decryptedText;
