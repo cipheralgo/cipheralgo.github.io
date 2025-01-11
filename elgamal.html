@@ -67,9 +67,10 @@
 </div>
 
 <script>
-    const p = 23;  
-    const g = 5;   
-    const x = 6;
+    const alpha = 5; // α
+    const P = 89;    // Prime number
+    const d = 8;     // Bob's private key
+    const i = 13;    // Alice's random number
 
     function runElgamalEncrypt() {
         const plaintext = document.getElementById("Elgamal_text").value;
@@ -97,13 +98,23 @@
     }
 
     function elgamalEncrypt(plaintext) {
-        const k = Math.floor(Math.random() * (p - 2)) + 1;
-        const y = modPow(g, x, p);
-        const K = modPow(y, k, p);
-        const m = strToNum(plaintext);
-        const c1 = modPow(g, k, p);
-        const c2 = (m * K) % p;
-        return `(${c1}, ${c2})`;
+        // Bob's public key (β)
+        const beta = modPow(alpha, d, P);
+
+        // Alice's ephemeral key (Ke)
+        const Ke = modPow(alpha, i, P);
+
+        // Alice's masking key (Km)
+        const Km = modPow(beta, i, P);
+
+        // Convert plaintext to number
+        const X = parseInt(plaintext);
+
+        // Encrypt the plaintext
+        const Y = (X * Km) % P;
+
+        // Return the ciphertext (Ke, Y)
+        return `(${Ke}, ${Y})`;
     }
 
     function elgamalDecrypt(ciphertext) {
@@ -113,14 +124,19 @@
             return "";
         }
 
-        const c1 = parseInt(match[1]);
-        const c2 = parseInt(match[2]);
-        const s = modPow(c1, x, p);
-        const sInverse = modInverse(s, p);
-        const m = (c2 * sInverse) % p;
+        const Ke = parseInt(match[1]);
+        const Y = parseInt(match[2]);
 
-        const decryptedText = numToStr(m);
-        return decryptedText;
+        // Bob calculates the masking key (Km)
+        const Km = modPow(Ke, d, P);
+
+        // Bob calculates the modular inverse of Km
+        const KmInverse = modInverse(Km, P);
+
+        // Decrypt the ciphertext
+        const X = (Y * KmInverse) % P;
+
+        return X.toString();
     }
 
     function modPow(base, exponent, modulus) {
@@ -162,18 +178,6 @@
             a = (a * a) % m;
         }
         return result;
-    }
-
-    function strToNum(str) {
-        let num = 0;
-        for (let i = 0; i < str.length; i++) {
-            num += str.charCodeAt(i);
-        }
-        return num;
-    }
-
-    function numToStr(num) {
-        return String.fromCharCode(num);
     }
 </script>
 </body>
