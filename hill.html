@@ -151,9 +151,10 @@
     }
 
     function hillEncrypt(plaintext, key) {
+        // Construct the key matrix vertically (column-wise)
         const keyMatrix = [
-            [parseInt(key[0]), parseInt(key[1])],
-            [parseInt(key[2]), parseInt(key[3])]
+            [parseInt(key[0]), parseInt(key[2])],
+            [parseInt(key[1]), parseInt(key[3])]
         ];
 
         const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -177,12 +178,15 @@
     }
 
     function hillDecrypt(encryptedText, key) {
-        const keyMatrix = matrixInverse([
-            [parseInt(key[0]), parseInt(key[1])],
-            [parseInt(key[2]), parseInt(key[3])]
-        ]);
+        // Construct the key matrix vertically (column-wise)
+        const keyMatrix = [
+            [parseInt(key[0]), parseInt(key[2])],
+            [parseInt(key[1]), parseInt(key[3])]
+        ];
 
-        if (keyMatrix === null) {
+        const inverseMatrix = matrixInverse(keyMatrix);
+
+        if (inverseMatrix === null) {
             alert("The key matrix is not invertible. Encryption/decryption is not possible.");
             return "";
         }
@@ -198,7 +202,7 @@
                 i + 1 < encryptedText.length ? alphabet.indexOf(encryptedText[i + 1]) : 0
             ];
 
-            const decryptedVector = matrixMultiply(keyMatrix, vector, mod);
+            const decryptedVector = matrixMultiply(inverseMatrix, vector, mod);
 
             decryptedText += alphabet[decryptedVector[0]];
             decryptedText += alphabet[decryptedVector[1]];
