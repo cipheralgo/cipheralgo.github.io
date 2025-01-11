@@ -69,7 +69,7 @@
 </div>
 
 <script>
-    const alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ';
+    const alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ'; // Exclude 'J'
 
     function runPlayfairEncrypt() {
         const plaintext = document.getElementById("pf_text").value.toUpperCase().replace(/J/g, 'I');
@@ -106,6 +106,7 @@
         key = [...new Set(key)]; // Remove duplicates
         const matrix = [];
 
+        // Fill the matrix with the key
         for (let i = 0; i < key.length; i++) {
             if (matrix.length === 0 || matrix[matrix.length - 1].length === 5) {
                 matrix.push([]);
@@ -113,6 +114,7 @@
             matrix[matrix.length - 1].push(key[i]);
         }
 
+        // Fill the remaining letters of the alphabet
         for (let i = 0; i < alphabet.length; i++) {
             if (!key.includes(alphabet[i])) {
                 if (matrix.length === 0 || matrix[matrix.length - 1].length === 5) {
@@ -134,10 +136,13 @@
             const [row2, col2] = findPosition(matrix, pair.charAt(1));
 
             if (row1 === row2) {
+                // Same row: shift right
                 encryptedText += matrix[row1][(col1 + 1) % 5] + matrix[row2][(col2 + 1) % 5];
             } else if (col1 === col2) {
+                // Same column: shift down
                 encryptedText += matrix[(row1 + 1) % 5][col1] + matrix[(row2 + 1) % 5][col2];
             } else {
+                // Rectangle: swap columns
                 encryptedText += matrix[row1][col2] + matrix[row2][col1];
             }
         });
@@ -154,10 +159,13 @@
             const [row2, col2] = findPosition(matrix, pair.charAt(1));
 
             if (row1 === row2) {
+                // Same row: shift left
                 decryptedText += matrix[row1][(col1 - 1 + 5) % 5] + matrix[row2][(col2 - 1 + 5) % 5];
             } else if (col1 === col2) {
+                // Same column: shift up
                 decryptedText += matrix[(row1 - 1 + 5) % 5][col1] + matrix[(row2 - 1 + 5) % 5][col2];
             } else {
+                // Rectangle: swap columns
                 decryptedText += matrix[row1][col2] + matrix[row2][col1];
             }
         });
@@ -167,14 +175,22 @@
 
     function getLetterPairs(text) {
         const pairs = [];
+        let i = 0;
 
-        for (let i = 0; i < text.length; i += 2) {
-            if (i + 1 < text.length) {
-                pairs.push(text.substr(i, 2));
+        while (i < text.length) {
+            let a = text.charAt(i);
+            let b = (i + 1 < text.length) ? text.charAt(i + 1) : 'X';
+
+            if (a === b) {
+                b = 'X';
+                i++; // Skip the next character
             } else {
-                pairs.push(text.charAt(i) + 'X');
+                i += 2;
             }
+
+            pairs.push(a + b);
         }
+
         return pairs;
     }
 
